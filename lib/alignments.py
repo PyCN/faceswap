@@ -71,7 +71,7 @@ class Alignments():
         """ Return the path to alignments file """
         logger.debug("Getting location: (folder: '%s', filename: '%s')", folder, filename)
         extension = os.path.splitext(filename)[1]
-        if extension in (".json", ".p", ".yaml", ".yml"):
+        if extension in (".json", ".p", ".pickle", ".yaml", ".yml"):
             # Reformat legacy alignments file
             filename = self.update_file_format(folder, filename)
             logger.debug("Updated legacy alignments. New filename: '%s'", filename)
@@ -253,10 +253,10 @@ class Alignments():
         new_location = "{}.{}".format(os.path.splitext(old_location)[0],
                                       self.serializer.file_extension)
         logger.info("Old location: '%s', New location: '%s'", old_location, new_location)
-
-        load_serializer = get_serializer_from_filename(old_location)
-        data = load_serializer.load(old_location)
-        self.serializer.save(new_location, data)
+        if os.path.exists(old_location):
+            load_serializer = get_serializer_from_filename(old_location)
+            data = load_serializer.load(old_location)
+            self.serializer.save(new_location, data)
         return os.path.basename(new_location)
 
     # <landmarks> #
